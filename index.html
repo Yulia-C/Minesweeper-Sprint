@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minesweeper</title>
+    <link rel="stylesheet" href="css/app.css">
+
+</head>
+
+<body onload="onInit()">
+    <h1>MINESWEEPER</h1>
+    <img onclick="onInit()" src="img/start.png" />
+    <div class="difficulty">
+        
+        <b> Game Level: </b>
+        <button data-idx="0" class="diff" onclick="onDifficultyClick(this)">Easy</button>
+        <button data-idx="1" class="diff" onclick="onDifficultyClick(this)">Normal</button>
+        <button data-idx="2" class="diff" onclick="onDifficultyClick(this)">Hard</button>
+    </div>
+    <div class="specs">
+        Timer: <span class="timer"> </span> | Mines: <span class="mines"></span>| Lives:<span class="lives"></span>
+ </div>
+    
+    
+    <div onmouseup="onPlantFlag(event)" class="playing-board"> </div>
+
+    <div class="footer"> © Yulia Chernyak</div>
+
+    <script src="js/util.js"></script>
+    <script src="js/game.js"></script>
+</body>
+
+</html>

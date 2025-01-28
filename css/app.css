@@ -1,0 +1,56 @@
+body {
+    text-align: center;
+    background-color: rgba(201, 216, 247, 0.684);
+}
+
+img {
+    cursor: pointer;
+    width: 70px;
+    height: 70px;
+}
+
+
+button {
+    margin-inline: auto;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 10px;
+    border: 2px solid rgb(0, 0, 0);
+    background-color: rgba(245, 197, 169, 0.767);
+
+}
+
+
+button:hover {
+    background-color: rgb(247, 161, 111);
+}
+
+table {
+    border: 3px solid rgb(129, 43, 215);
+    margin-inline: auto;
+    /* margin-block: 10px; */
+    padding: 5px;
+    border-radius: 10px;
+    background-color:  rgba(245, 197, 169, 0.767);
+
+}
+
+.hidden {
+    border: 3px solid rgba(0, 0, 0, 0.514);
+    background-color: rgb(133, 159, 243);
+}
+
+td {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 0, 0, 0.195);
+    background-color: rgb(243, 173, 133);
+    border-radius: 3px;
+    padding: 2px;
+    text-align: center;
+    cursor: pointer;
+}
+
+td.hidden:hover {
+    background-color: rgb(103, 134, 238);
+}
