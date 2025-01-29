@@ -1,33 +1,78 @@
 'use strict'
 
 
+// function renderBoard(board) {
+
+//     var strHTML = '<table><tbody>'
+//         for (var i = 0; i < board.length; i++) {
+//         strHTML += '<tr>'
+
+//         for (var j = 0; j < board[0].length; j++) {
+//             var cell = board[i][j]
+//             var className = cell.isMine ? 'mined' : 'safe'
+//             var cellContent = !cell.isShown ? '' : (cell.isMine ? MINE : cell.minesAroundCount)
+//             strHTML += `<td data-i="${i}"data-j="${j}"onClick="onCellClicked(this,${i}, ${j})" class =" hidden ${className}">${cellContent}</td>`
+//         }
+
+//         strHTML += '</tr>'
+//     }
+//     strHTML += '</tbody></table>'
+
+//     var elBoard = document.querySelector('.playing-board')
+//     elBoard.innerHTML = strHTML
+// }
+
+
 function renderBoard(board) {
-
+    document.querySelector('img').src = START_IMG
     var strHTML = '<table><tbody>'
-        for (var i = 0; i < board.length; i++) {
+    for (var i = 0; i < board.length; i++) {
+
         strHTML += '<tr>'
-
         for (var j = 0; j < board[0].length; j++) {
-            var cell = board[i][j]
-            var className = cell.isMine ? 'mined' : 'safe'
-            var cellContent = !cell.isShown ? '' : (cell.isMine ? MINE : cell.minesAroundCount)
-            strHTML += `<td data-i="${i}"data-j="${j}"onClick="onCellClicked(this,${i}, ${j})" class =" hidden ${className}">${cellContent}</td>`
-        }
 
+            const cell = board[i][j]
+            // const className = `cell cell-${i}-${j}`
+            // var className = cell.isMine ? 'mined' : 'safe'
+            var cellContent = !cell.isShown ? '' : (cell.isMine ? MINE : cell.minesAroundCount)
+            var location = `cell-${i}-${j}`
+            strHTML += `<td class=" ${location} hidden" onClick="onCellClicked(this,${i}, ${j})">${cellContent}</td>`
+           
+        }
         strHTML += '</tr>'
     }
     strHTML += '</tbody></table>'
+    
+    const elContainer = document.querySelector('.playing-board')
+    elContainer.innerHTML = strHTML
+}
 
-    var elBoard = document.querySelector('.playing-board')
-    elBoard.innerHTML = strHTML
+function getRandEmptyCell(board) {
+
+    const emptyCells = []
+
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[i].length; j++) {
+
+            var cell = board[i][j]
+            if (!cell.isMine) {
+                emptyCells.push({ i, j })
+            }
+        }
+    }
+    // if (!emptyCells.length) return null
+    var randIdx = getRandomIntInclusive(0, emptyCells.length - 1)
+    var randomCell = emptyCells[randIdx]
+
+    return randomCell
 }
 
 // location is an object like this - { i: 2, j: 7 }
-function renderCell(i, j, value) {
-    var elCell = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
-    elCell.innerText = value
-    return elCell
-} 
+function renderCell(location, value) {
+    // Select the elCell and set the value
+    var elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
+    elCell.innerHTML = value
+}
 
 // function getSelector(coord) {
 //     return `#cell-${coord.i}-${coord.j}`
@@ -35,16 +80,16 @@ function renderCell(i, j, value) {
 
 
 function countNeighborMines(cellI, cellJ, board) {
-	var mineCount = 0
-	for (var i = cellI - 1; i <= cellI + 1; i++) {
-		if (i < 0 || i >= board.length) continue
-		for (var j = cellJ - 1; j <= cellJ + 1; j++) {
-			if (i === cellI && j === cellJ) continue
-			if (j < 0 || j >= board[i].length) continue
-			if (board[i][j].isMine) mineCount++
-		}
-	}
-	return mineCount
+    var mineCount = 0
+    for (var i = cellI - 1; i <= cellI + 1; i++) {
+        if (i < 0 || i >= board.length) continue
+        for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+            if (i === cellI && j === cellJ) continue
+            if (j < 0 || j >= board[i].length) continue
+            if (board[i][j].isMine) mineCount++
+        }
+    }
+    return mineCount
 }
 
 function startTimer() {
@@ -52,14 +97,14 @@ function startTimer() {
     gStartTime = Date.now()
     // gIsRun = true
     gInterval = setInterval(updateTimer, 1)
-    
+
 }
 
 function resetTimer() {
-    clearInterval(gInterval)
     var elTimer = document.querySelector('.timer')
-    elTimer.innerHTML = '00:00 '
+    elTimer.innerHTML = '00:00'
     gStartTime = 0
+
     gInterval = 0
 
 }
