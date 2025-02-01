@@ -16,7 +16,7 @@ var gTimerStarted
 
 var gLevel = {
     SIZE: gDifficulties[0],
-    MINES: 8,
+    MINES: 16,
 }
 
 var gBoard
@@ -288,7 +288,7 @@ function onDifficultyClick(elBtn) {
     var difficulty = gDifficulties[elBtn.dataset.idx]
     elBtn.classList.add('clicked')
     gLevel.SIZE = difficulty
-    gLevel.MINES = difficulty * 2
+    gLevel.MINES = (difficulty * 2)
     gBoard = buildBoard(gLevel.SIZE)
     renderBoard(gBoard)
 
