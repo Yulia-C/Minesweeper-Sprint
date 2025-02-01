@@ -21,14 +21,14 @@ var gLevel = {
 
 var gBoard
 var gGame
+
 const START_IMG = 'img/start.png'
 const LOSE_IMG = 'img/lose.png'
 const WIN_IMG = 'img/win.png'
 
 // Todo:
-// add lives icon for starters
-// checkVictory()
-
+// add heart emoji icon for starters
+//need to find a way to place mines after click
 
 function onInit() {
     // console.log('Hi');
@@ -65,8 +65,7 @@ function buildBoard(size) {
         }
     }
     for (var i = 0; i < gLevel.MINES; i++) {
-        // setTimeout((onCellClicked)=> placeMines(board)
-        // ,100)
+
 
         placeMines(board)
         updateMineCount(1)
@@ -92,11 +91,13 @@ function onCellClicked(elCell, i, j) {
     var cell = gBoard[i][j]
 
     //Changing classname after clicking on cell:
-    // getClassName(elCell)
     elCell.classList.remove('hidden')
 
     //Starting the timer:
     startTimer()
+    //need to find a way to place mines after click
+
+    // if (gTimerStarted) setInterval((buildBoard)=>{placeMines},100)
     // opening the cells
     if (!cell.isShown) {
         cell.isShown = true
@@ -104,7 +105,7 @@ function onCellClicked(elCell, i, j) {
             updateLivesCount(1)
             updateMineCount(-1)
             if (gLivesCount === 0) {
-
+                revealAllMines()
                 console.log('Game Over')
                 clearTimeout(gInterval)
                 //When lives === 0 gameOver()
@@ -222,14 +223,32 @@ function openNeighbourCells(cellI, cellJ) {
 
 }
 
+function revealAllMines() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[i].length; j++) {
+            const cell = gBoard[i][j]
+            if (cell.isMine && !cell.isShown) {
+                const elCell = document.querySelector(`.cell-${i}-${j}`)
+                elCell.innerText = MINE// Display the mine
+                elCell.classList.remove('hidden')// Make the cell visible
+                cell.isShown = true// Mark the cell as revealed
+            }
+        }
+    }
+}
 function updateMineCount(diff) {
     gMineCount += diff
     document.querySelector('.mines').innerText = gMineCount
 }
 
 function updateLivesCount(diff) {
+    // var lives = []
+    // for (var i = 0; i < gLivesCount; i++) {
+    //     lives.push(LIFE)
+    // }
     gLivesCount -= diff
     document.querySelector('.lives').innerText = gLivesCount
+    // lives.pop(LIFE)
 
     // return gLivesCount
 }

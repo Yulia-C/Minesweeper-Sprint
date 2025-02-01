@@ -1,27 +1,6 @@
 'use strict'
 
 
-// function renderBoard(board) {
-
-//     var strHTML = '<table><tbody>'
-//         for (var i = 0; i < board.length; i++) {
-//         strHTML += '<tr>'
-
-//         for (var j = 0; j < board[0].length; j++) {
-//             var cell = board[i][j]
-//             var className = cell.isMine ? 'mined' : 'safe'
-//             var cellContent = !cell.isShown ? '' : (cell.isMine ? MINE : cell.minesAroundCount)
-//             strHTML += `<td data-i="${i}"data-j="${j}"onClick="onCellClicked(this,${i}, ${j})" class =" hidden ${className}">${cellContent}</td>`
-//         }
-
-//         strHTML += '</tr>'
-//     }
-//     strHTML += '</tbody></table>'
-
-//     var elBoard = document.querySelector('.playing-board')
-//     elBoard.innerHTML = strHTML
-// }
-
 
 function renderBoard(board) {
     document.querySelector('img').src = START_IMG
@@ -109,8 +88,11 @@ function startTimer() {
         gInterval = setInterval(updateTimer, 1)
         gTimerStarted = true
     }
-}
 
+    // renderBoard(gBoard)
+
+
+}
 
 
 function resetTimer() {
@@ -137,7 +119,7 @@ function updateTimer() {
     var formattedSeconds = String(seconds).padStart(2, '0')
 
     elTime.innerText = `${formattedMinutes}:${formattedSeconds}`
-
+    gGame.secsPassed = seconds
 }
 
 function getRandomIntInclusive(min, max) {
