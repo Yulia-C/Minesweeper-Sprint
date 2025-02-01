@@ -33,10 +33,10 @@ function renderBoard(board) {
 
             const cell = board[i][j]
             // const className = `cell cell-${i}-${j}`
-            // var className = cell.isMine ? 'mined' : 'safe'
+            const className = cell.isMine ? 'mined' : 'safe'
             var cellContent = !cell.isShown ? '' : (cell.isMine ? MINE : cell.minesAroundCount)
             var location = `cell-${i}-${j}`
-            strHTML += `<td onmousedown="onRightClick(event,this)" class="${location} hidden" onClick="onCellClicked(this,${i}, ${j})">${cellContent}</td>`
+            strHTML += `<td onmousedown="onRightClick(event,this)" class="${location} hidden ${className}" onClick="onCellClicked(this,${i}, ${j})">${cellContent}</td>`
 
         }
         strHTML += '</tr>'
@@ -104,19 +104,22 @@ function countNeighborMines(cellI, cellJ, board) {
 }
 
 function startTimer() {
-    // if (!gIsRun) {
-    gStartTime = Date.now()
-    // gIsRun = true
-    gInterval = setInterval(updateTimer, 1)
-
+    if (!gTimerStarted) {
+        gStartTime = Date.now()
+        gInterval = setInterval(updateTimer, 1)
+        gTimerStarted = true
+    }
 }
 
-function resetTimer() {
-    var elTimer = document.querySelector('.timer')
-    elTimer.innerHTML = '00:00'
-    gStartTime = 0
 
-    gInterval = 0
+
+function resetTimer() {
+    clearInterval(gInterval)
+    gStartTime = 0
+    var elTimer = document.querySelector('.timer')
+    elTimer.innerText = '00:00'
+    gInterval = null
+    gTimerStarted = false
 
 }
 
