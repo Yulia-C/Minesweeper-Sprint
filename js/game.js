@@ -53,7 +53,9 @@ function onInit() {
 
     console.log('gBoard:', gBoard)
 
+
     resetTimer()
+
 }
 
 // function onRestartGame() {
@@ -94,10 +96,11 @@ function buildBoard(size) {
 
         placeMines(board)
         updateMineCount(1)
-        
-        
+
+
     }
     updateLivesCount(0)
+
 
     return board
 }
@@ -111,16 +114,14 @@ function placeMines(board) {
 
 
 function onCellClicked(elCell, i, j) {
-    // console.log('elCell:', elCell)
     if (!gGame.isOn) return
-
+    if (elCell.classList.contains('flagged')) return
+    
+    const cellCoord = getCellCoord(elCell)
     var cell = gBoard[i][j]
     var count = countNeighborMines(i, j, gBoard)
 
     //Changing classname after clicking on cell:
-    // var className = cell.isMine ? 'mined' : 'safe'
-    // elCell.classList.remove('hidden')
-    // elCell.classList.add(className)
     getClassName(elCell, cell)
 
     //Starting the timer:
@@ -131,13 +132,15 @@ function onCellClicked(elCell, i, j) {
         gIsRun = false
         clearTimeout(gInterval)
     }
+    // if (onRightClick()) {
+    //     onPlantFlag(elCell)
 
+    // }
     if (!cell.isShown) {
         cell.isShown = true
         if (cell.isMine) {
-            updateLivesCount(-1)
-            console.log('gLivesCount',gLivesCount);
-            
+            updateLivesCount(1)
+
             console.log('Game Over')
             //Updating the Dom
             elCell.innerText = MINE
@@ -145,23 +148,60 @@ function onCellClicked(elCell, i, j) {
             document.querySelector('img').src = LOSE_IMG
         } else {
             console.log('count:', count)
+            cell.minesAroundCount = count
             elCell.innerText = (count > 0) ? count : ''
             openNeighbourCells(i, j)
             // renderBoard(gBoard)
         }
 
     }
+}
+
+function onRightClick(ev, elCell) {
+
+    document.addEventListener('contextmenu', ev => {
+        ev.preventDefault()
+    })
+    // console.log(ev);
+
+    var rightClick
+    if (!ev) var ev = window.Event
+    if (ev.which) {
+        rightClick = (ev.which === 3)
+        //true
+    } else if (ev.button) {
+        rightClick = (ev.which === 2)
+        //false
+    }
+    if (rightClick) {
+        onPlantFlag(elCell)
+    } else if (rightClick) {
+        removeFlag(elCell)
+    }
+}
+
+function onPlantFlag(elCell) {
+    // var rightClick = onRightClick(elCell)
+
+    if (elCell.classList.contains('hidden')) {
+        elCell.classList.add('flagged')
+        elCell.innerText = FLAG
+        gGame.markedCount += 1
+        updateMineCount(-1)
+        console.log('Flag planted');
+    }
 
 }
 
-function onPlantFlag(ev) {
-    //     // console.log('ev:', ev)
-    // }
-
-    // function updateTimer() {
-
+function removeFlag(elCell) {
+    if (elCell.classList.contains('hidden')) {
+        elCell.classList.remove('flagged')
+        elCell.innerText = ''
+        gGame.markedCount -= 1
+        updateMineCount(+1)
+        // console.log(elCell);
+    }
 }
-
 
 function openNeighbourCells(cellI, cellJ) {
 
@@ -177,6 +217,7 @@ function openNeighbourCells(cellI, cellJ) {
 
                 //Dom
                 var elCell = document.querySelector(`.cell-${i}-${j}`)
+                if (elCell.classList.contains('flagged')) return
                 getClassName(elCell, gBoard[i][j])
 
             }
@@ -191,11 +232,9 @@ function updateMineCount(diff) {
 }
 
 function updateLivesCount(diff) {
-    for (var i = 0; i < gLivesCount; i++) {
-        document.querySelector('.lives').innerText += LIFE
-        
-    }
-    gLivesCount += diff
+    gLivesCount -= diff
+    document.querySelector('.lives').innerText = gLivesCount
+
     // return gLivesCount
 }
 

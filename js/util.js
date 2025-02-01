@@ -36,13 +36,13 @@ function renderBoard(board) {
             // var className = cell.isMine ? 'mined' : 'safe'
             var cellContent = !cell.isShown ? '' : (cell.isMine ? MINE : cell.minesAroundCount)
             var location = `cell-${i}-${j}`
-            strHTML += `<td class=" ${location} hidden" onClick="onCellClicked(this,${i}, ${j})">${cellContent}</td>`
-           
+            strHTML += `<td onmousedown="onRightClick(event,this)" class="${location} hidden" onClick="onCellClicked(this,${i}, ${j})">${cellContent}</td>`
+
         }
         strHTML += '</tr>'
     }
     strHTML += '</tbody></table>'
-    
+
     const elContainer = document.querySelector('.playing-board')
     elContainer.innerHTML = strHTML
 }
@@ -74,10 +74,21 @@ function renderCell(location, value) {
     elCell.innerHTML = value
 }
 
-// function getSelector(coord) {
-//     return `#cell-${coord.i}-${coord.j}`
-// }
+function getCellCoord(strCell) {
+    const coord = {}
+    var trimmedClass = strCell.className.split(' ')[0]
+    const parts = trimmedClass.split('-') // ['cell', '2', '7']
+    if (parts.length === 3 && parts[0] === 'cell') {
 
+        coord.i = +parts[1]
+        coord.j = +parts[2]
+    } else {
+        coord.i = NaN;
+        coord.j = NaN;
+    }
+    // console.log('coord:', coord) // {i: 2, j: 7}
+    return coord
+}
 
 function countNeighborMines(cellI, cellJ, board) {
     var mineCount = 0
