@@ -83,7 +83,6 @@ function placeMines(board) {
 }
 
 
-
 function onCellClicked(elCell, i, j) {
     if (!gGame.isOn) return
     if (elCell.classList.contains('flagged')) return
@@ -98,6 +97,7 @@ function onCellClicked(elCell, i, j) {
     //need to find a way to place mines after click
 
     // if (gTimerStarted) setInterval((buildBoard)=>{placeMines},100)
+    
     // opening the cells
     if (!cell.isShown) {
         cell.isShown = true
@@ -126,10 +126,10 @@ function onCellClicked(elCell, i, j) {
 }
 
 function onRightClick(ev, elCell) {
-    if (!gGame.isOn) return
     document.addEventListener('contextmenu', ev => {
-        ev.preventDefault()
+        ev.preventDefault(elCell)
     })
+    if (!gGame.isOn) return
     // console.log(ev);
     var rightClick
     if (!ev) var ev = window.Event
@@ -288,7 +288,7 @@ function onDifficultyClick(elBtn) {
     var difficulty = gDifficulties[elBtn.dataset.idx]
     elBtn.classList.add('clicked')
     gLevel.SIZE = difficulty
-    gLevel.MINES = difficulty
+    gLevel.MINES = difficulty * 2
     gBoard = buildBoard(gLevel.SIZE)
     renderBoard(gBoard)
 
