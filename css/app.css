@@ -20,6 +20,17 @@ button {
 
 }
 
+.one {
+    color: red;
+}
+
+.two {
+    color: blue;
+}
+
+.three {
+    color: green
+}
 
 button:hover {
     background-color: rgb(247, 161, 111);
@@ -31,7 +42,7 @@ table {
     /* margin-block: 10px; */
     padding: 5px;
     border-radius: 10px;
-    background-color:  rgba(245, 197, 169, 0.767);
+    background-color: rgba(245, 197, 169, 0.767);
 
 }
 

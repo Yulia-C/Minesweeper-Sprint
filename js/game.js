@@ -116,10 +116,8 @@ function placeMines(board) {
 function onCellClicked(elCell, i, j) {
     if (!gGame.isOn) return
     if (elCell.classList.contains('flagged')) return
-    
-    const cellCoord = getCellCoord(elCell)
+
     var cell = gBoard[i][j]
-    var count = countNeighborMines(i, j, gBoard)
 
     //Changing classname after clicking on cell:
     getClassName(elCell, cell)
@@ -132,38 +130,33 @@ function onCellClicked(elCell, i, j) {
         gIsRun = false
         clearTimeout(gInterval)
     }
-    // if (onRightClick()) {
-    //     onPlantFlag(elCell)
 
-    // }
     if (!cell.isShown) {
         cell.isShown = true
         if (cell.isMine) {
             updateLivesCount(1)
 
             console.log('Game Over')
+            //When lives === 0 gameOver()
+
             //Updating the Dom
             elCell.innerText = MINE
             gGame.isOn = false
             document.querySelector('img').src = LOSE_IMG
         } else {
-            console.log('count:', count)
-            cell.minesAroundCount = count
-            elCell.innerText = (count > 0) ? count : ''
+            // console.log('count:', count)
             openNeighbourCells(i, j)
-            // renderBoard(gBoard)
         }
 
     }
 }
 
 function onRightClick(ev, elCell) {
-
+    if (!gGame.isOn) return
     document.addEventListener('contextmenu', ev => {
         ev.preventDefault()
     })
     // console.log(ev);
-
     var rightClick
     if (!ev) var ev = window.Event
     if (ev.which) {
@@ -174,32 +167,46 @@ function onRightClick(ev, elCell) {
         //false
     }
     if (rightClick) {
-        onPlantFlag(elCell)
-    } else if (rightClick) {
-        removeFlag(elCell)
+
+        if (!elCell.classList.contains('hidden')) return
+
+        if (elCell.classList.contains('flagged')) {
+            removeFlag(elCell)
+        } else {
+            onPlantFlag(elCell)
+        }
     }
+  
 }
 
 function onPlantFlag(elCell) {
     // var rightClick = onRightClick(elCell)
+    const cellCoord = getCellCoord(elCell)
 
-    if (elCell.classList.contains('hidden')) {
-        elCell.classList.add('flagged')
-        elCell.innerText = FLAG
+    if (elCell.classList.contains('hidden') && !elCell.classList.contains('flagged')) {
+        //Model
         gGame.markedCount += 1
         updateMineCount(-1)
+        //DOM
+        elCell.classList.add('flagged')
+        elCell.innerText = FLAG
         console.log('Flag planted');
+        gBoard[cellCoord.i][cellCoord.j].isMarked = true
+
     }
 
 }
 
 function removeFlag(elCell) {
-    if (elCell.classList.contains('hidden')) {
+    const cellCoord = getCellCoord(elCell)
+
+    if (elCell.classList.contains('flagged')) {
         elCell.classList.remove('flagged')
         elCell.innerText = ''
         gGame.markedCount -= 1
         updateMineCount(+1)
-        // console.log(elCell);
+        console.log('Flag removed');
+        gBoard[cellCoord.i][cellCoord.j].isMarked = false
     }
 }
 
@@ -212,17 +219,23 @@ function openNeighbourCells(cellI, cellJ) {
             if (j < 0 || j >= gBoard[i].length) continue
             //Model
             if (!gBoard[i][j].isMine) {
-
+                var count = countNeighborMines(i, j, gBoard)
                 gBoard[i][j].isShown = true
+                gBoard[i][j].minesAroundCount = count
 
                 //Dom
                 var elCell = document.querySelector(`.cell-${i}-${j}`)
                 if (elCell.classList.contains('flagged')) return
+                elCell.innerText = (count > 0) ? count : ''
+                if (count === 1) elCell.classList.add(`one`)
+                if (count === 2) elCell.classList.add(`two`)
+                if (count === 3) elCell.classList.add(`three`)
                 getClassName(elCell, gBoard[i][j])
 
             }
         }
     }
+    console.log(gBoard);
 }
 
 function updateMineCount(diff) {
