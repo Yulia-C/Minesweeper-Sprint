@@ -26,8 +26,6 @@ const START_IMG = 'img/start.png'
 const LOSE_IMG = 'img/lose.png'
 const WIN_IMG = 'img/win.png'
 
-// Todo:
-// add heart emoji icon for starters
 
 function onInit() {
     // console.log('Hi');
@@ -71,10 +69,22 @@ function buildBoard(size) {
 
 function placeMines(board) {
     var randCell = getRandEmptyCell(board)
-     board[randCell.i][randCell.j].isMine = true
+    board[randCell.i][randCell.j].isMine = true
+
 }
 
 
+function getClassName(board) {
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[i].length; j++) {
+            var cell = board[i][j]
+            var className = cell.isMine ? 'mined' : 'safe'
+            var elCell = document.querySelector(`.cell-${i}-${j}`)
+
+            elCell.classList.add(`${className}`)
+        }
+    }
+}
 
 
 function onCellClicked(elCell, i, j) {
@@ -82,7 +92,6 @@ function onCellClicked(elCell, i, j) {
     if (elCell.classList.contains('flagged')) return
 
     var cell = gBoard[i][j]
-    // setClassName(elCell, cell)
 
     //Starting the timer:
     startTimer()
@@ -94,7 +103,7 @@ function onCellClicked(elCell, i, j) {
         cell.isShown = true
         if (cell.isMine && cell.isShown) {
             updateLivesCount(1)
-            if (gLivesCount !== 0){
+            if (gLivesCount !== 0) {
 
                 setTimeout(() => {
                     elCell.classList.add('hidden'), cell.isShown = false
@@ -112,11 +121,10 @@ function onCellClicked(elCell, i, j) {
 
             }
 
-
             //Updating the Dom
             elCell.innerText = MINE
         } else {
-            // console.log('count:', count)
+            getClassName(gBoard)
             openNeighbourCells(i, j)
         }
 
@@ -187,11 +195,14 @@ function removeFlag(elCell) {
 
 }
 
+
+
+
 function openNeighbourCells(cellI, cellJ) {
 
-    for (var i = cellI - 1; i <= cellI + 1; i++) {
+    for (var i = cellI - 2; i <= cellI + 2; i++) {
         if (i < 0 || i >= gBoard.length) continue
-        for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+        for (var j = cellJ - 2; j <= cellJ + 2; j++) {
             if (i === cellI && j === cellJ) continue
             if (j < 0 || j >= gBoard[i].length) continue
             //Model
@@ -199,6 +210,7 @@ function openNeighbourCells(cellI, cellJ) {
                 var count = countNeighborMines(i, j, gBoard)
 
                 gBoard[i][j].isShown = true
+
                 gBoard[i][j].minesAroundCount = count
 
                 gGame.shownCount += 1
@@ -279,7 +291,7 @@ function checkVictory() {
 
         document.querySelector('img').src = WIN_IMG
     }
-    
+
     console.log(gMineCount);
 }
 

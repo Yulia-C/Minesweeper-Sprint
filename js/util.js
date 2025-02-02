@@ -12,10 +12,10 @@ function renderBoard(board) {
 
             const cell = board[i][j]
             // const className = `cell cell-${i}-${j}`
-            var className = cell.isMine ? 'mined' : 'safe'
+            // var className = cell.isMine ? 'mined' : 'safe'
             var cellContent = !cell.isShown ? '' : (cell.isMine ? MINE : cell.minesAroundCount)
             var location = `cell-${i}-${j}`
-            strHTML += `<td onmousedown="onRightClick(event,this)" class="${location} hidden ${className}" onClick="onCellClicked(this,${i}, ${j})">${cellContent}</td>`
+            strHTML += `<td onmousedown="onRightClick(event,this)" class="${location} hidden" onClick="onCellClicked(this,${i}, ${j})">${cellContent}</td>`
 
         }
         strHTML += '</tr>'
@@ -104,10 +104,8 @@ function startTimer() {
         gTimerStarted = true
         for (var i = 0; i < gLevel.MINES; i++) {
             placeMines(gBoard)
-            // updateClassName(gBoard)
         }
         
-        // renderBoard(gBoard)
     }
 
 
