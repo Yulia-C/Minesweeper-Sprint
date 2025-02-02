@@ -12,7 +12,7 @@ function renderBoard(board) {
 
             const cell = board[i][j]
             // const className = `cell cell-${i}-${j}`
-            const className = cell.isMine ? 'mined' : 'safe'
+            var className = cell.isMine ? 'mined' : 'safe'
             var cellContent = !cell.isShown ? '' : (cell.isMine ? MINE : cell.minesAroundCount)
             var location = `cell-${i}-${j}`
             strHTML += `<td onmousedown="onRightClick(event,this)" class="${location} hidden ${className}" onClick="onCellClicked(this,${i}, ${j})">${cellContent}</td>`
@@ -82,14 +82,33 @@ function countNeighborMines(cellI, cellJ, board) {
     return mineCount
 }
 
+// function updateClassName(board) {
+//     for (var i = 0; i < board.length; i++) {
+//         for (var j = 0; j < board[i].length; j++) {
+//             const cell = board[i][j]
+//             const elCell = document.querySelector(`.cell-${i}-${j}`)
+//             if (cell.isMine) {
+//                 elCell.classList.remove('.safe')
+//                 elCell.classList.add('mined')
+//             }
+//         }
+//     }
+//     renderBoard(board)
+
+// }
+
 function startTimer() {
     if (!gTimerStarted) {
         gStartTime = Date.now()
         gInterval = setInterval(updateTimer, 1)
         gTimerStarted = true
+        for (var i = 0; i < gLevel.MINES; i++) {
+            placeMines(gBoard)
+            // updateClassName(gBoard)
+        }
+        
+        // renderBoard(gBoard)
     }
-
-    // renderBoard(gBoard)
 
 
 }
