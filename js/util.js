@@ -2,30 +2,6 @@
 
 
 
-function renderBoard(board) {
-    document.querySelector('img').src = START_IMG
-    var strHTML = '<table><tbody>'
-    for (var i = 0; i < board.length; i++) {
-
-        strHTML += '<tr>'
-        for (var j = 0; j < board[0].length; j++) {
-
-            const cell = board[i][j]
-            // const className = `cell cell-${i}-${j}`
-            // var className = cell.isMine ? 'mined' : 'safe'
-            var cellContent = !cell.isShown ? '' : (cell.isMine ? MINE : cell.minesAroundCount)
-            var location = `cell-${i}-${j}`
-            strHTML += `<td onmousedown="onRightClick(event,this)" class="${location} hidden" onClick="onCellClicked(this,${i}, ${j})">${cellContent}</td>`
-
-        }
-        strHTML += '</tr>'
-    }
-    strHTML += '</tbody></table>'
-
-    const elContainer = document.querySelector('.playing-board')
-    elContainer.innerHTML = strHTML
-}
-
 function getRandEmptyCell(board) {
 
     const emptyCells = []
@@ -47,67 +23,56 @@ function getRandEmptyCell(board) {
 }
 
 // location is an object like this - { i: 2, j: 7 }
-function renderCell(location, value) {
+function renderCell(value) {
     // Select the elCell and set the value
-    var elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
+    var elCell = document.querySelector(`.cell-${i}-${j}`)
     elCell.innerHTML = value
 }
 
-function getCellCoord(strCell) {
+function getCellCoord(elCell) {
     const coord = {}
-    var trimmedClass = strCell.className.split(' ')[0]
-    const parts = trimmedClass.split('-') // ['cell', '2', '7']
-    if (parts.length === 3 && parts[0] === 'cell') {
+
+    const str = elCell.className
+    const classParts = str.split(' ')  
+    const coordClass = classParts.find(cls => cls.startsWith('cell-'))
+    if (coordClass) {
+        const parts = coordClass.split('-')
 
         coord.i = +parts[1]
         coord.j = +parts[2]
-    } else {
-        coord.i = NaN;
-        coord.j = NaN;
     }
-    // console.log('coord:', coord) // {i: 2, j: 7}
-    return coord
+
+    return coord;
 }
+
 
 function countNeighborMines(cellI, cellJ, board) {
-    var mineCount = 0
+    var mineCount = 0;
+
+    // Loop through all 8 surrounding cells (including diagonals)
     for (var i = cellI - 1; i <= cellI + 1; i++) {
-        if (i < 0 || i >= board.length) continue
+        if (i < 0 || i >= board.length) continue;
+
         for (var j = cellJ - 1; j <= cellJ + 1; j++) {
-            if (i === cellI && j === cellJ) continue
             if (j < 0 || j >= board[i].length) continue
-            if (board[i][j].isMine) mineCount++
+            // if (i === cellI && j === cellJ) continue // Skip the current cell
+
+            const cell = board[i][j];
+            if (cell.isMine) mineCount++; // Count if it's a mine
         }
     }
-    return mineCount
+    return mineCount;
 }
 
-// function updateClassName(board) {
-//     for (var i = 0; i < board.length; i++) {
-//         for (var j = 0; j < board[i].length; j++) {
-//             const cell = board[i][j]
-//             const elCell = document.querySelector(`.cell-${i}-${j}`)
-//             if (cell.isMine) {
-//                 elCell.classList.remove('.safe')
-//                 elCell.classList.add('mined')
-//             }
-//         }
-//     }
-//     renderBoard(board)
 
-// }
 
 function startTimer() {
     if (!gTimerStarted) {
         gStartTime = Date.now()
         gInterval = setInterval(updateTimer, 1)
         gTimerStarted = true
-        for (var i = 0; i < gLevel.MINES; i++) {
-            placeMines(gBoard)
-        }
-        
+    
     }
-
 
 }
 

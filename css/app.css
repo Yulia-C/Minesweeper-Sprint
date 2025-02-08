@@ -4,6 +4,11 @@ body {
     background-color: rgba(201, 216, 247, 0.684);
 }
 
+body.dark-mode {
+    background-color: rgba(50, 54, 62, 0.684);
+
+}
+
 img {
     cursor: pointer;
     width: 80px;
@@ -21,27 +26,25 @@ img {
 
 .footer {
     margin: auto;
-    /* border: 2px solid rgb(0, 0, 0); */
     width: 200px;
     padding: 5px;
     border-radius: 5px;
-    /* background-color: rgba(245, 197, 169, 0.767); */
 }
 
 button {
-    /* margin-inline: auto; */
     cursor: pointer;
     padding: 5px;
-    /* width: 69px;
-    height: 30px; */
     font-family: 'Courier', monospace;
     font-size: medium;
     font-weight: bolder;
-
     border-radius: 10px;
     border: 2px solid rgb(0, 0, 0);
     background-color: rgba(233, 183, 154, 0.742);
+}
 
+button.dark-mode {
+    border: 2px solid rgb(210, 209, 209);
+    background-color: rgba(99, 77, 64, 0.742);
 }
 
 .one {
@@ -67,17 +70,28 @@ button {
 button:hover {
     background-color: rgb(247, 161, 111);
 }
+
+button:hover.dark-mode {
+    background-color: rgb(167, 108, 72);
+}
+
 .game-border {
-    width:550px;
-    height:auto;
+    width: 550px;
+    height: auto;
     border: 3px solid rgb(129, 43, 215);
     margin-inline: auto;
-    /* margin-block: 10px; */
     padding: 5px;
     border-radius: 10px;
     background-color: rgba(245, 203, 255, 0.421);
+}
+
+.game-border.dark-mode {
+    border: 3px solid rgb(54, 18, 90);
+    background-color: rgba(103, 83, 108, 0.421);
+
 
 }
+
 table {
     border: 3px solid rgb(129, 43, 215);
     margin-inline: auto;
@@ -85,12 +99,23 @@ table {
     padding: 5px;
     border-radius: 10px;
     background-color: rgba(245, 197, 169, 0.767);
+}
+
+table.dark-mode {
+    border: 3px solid rgb(53, 18, 89);
+    background-color: rgba(122, 96, 83, 0.767);
 
 }
 
 .hidden {
     border: 3px solid rgba(0, 0, 0, 0.514);
     background-color: rgb(133, 159, 243);
+}
+
+.hidden.dark-mode {
+    border: 3px solid rgb(160, 150, 150);
+    background-color: rgb(55, 66, 97);
+
 }
 
 td {
@@ -104,6 +129,14 @@ td {
     cursor: pointer;
 }
 
+td.dark-mode {
+    border: 3px solid rgba(181, 151, 151, 0.558);
+    background-color: rgb(157, 109, 81);
+}
+
 td.hidden:hover {
     background-color: rgb(103, 134, 238);
+}
+td.dark-mode.hidden:hover {
+    background-color: rgb(68, 86, 153);
 }
