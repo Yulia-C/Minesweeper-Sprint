@@ -1,0 +1,62 @@
+body.dark-mode {
+    background-color: rgba(50, 54, 62, 0.684);
+}
+
+button.dark-mode {
+    border: 2px solid rgb(210, 209, 209);
+    background-color: rgba(99, 77, 64, 0.742);
+}
+
+.one.dark-mode {
+    color: rgb(255, 135, 135);
+}
+
+.two.dark-mode {
+    color: rgb(149, 217, 251);
+}
+
+.three.dark-mode {
+    color: rgb(71, 242, 71)
+}
+
+.four.dark-mode {
+    color: rgb(226, 226, 91)
+}
+
+.five.dark-mode {
+    color: rgb(193, 137, 246)
+}
+
+button:hover.dark-mode {
+    background-color: rgb(167, 108, 72);
+}
+
+.score-board p.dark-mode {
+    border: 2px solid rgb(0, 0, 0);
+    background-color: rgba(99, 77, 64, 0.742);
+}
+
+.game-border.dark-mode {
+    border: 3px solid rgb(54, 18, 90);
+    background-color: rgba(103, 83, 108, 0.421);
+}
+
+table.dark-mode {
+    border: 3px solid rgb(53, 18, 89);
+    background-color: rgba(122, 96, 83, 0.767);
+
+}
+
+.hidden.dark-mode {
+    border: 3px solid rgb(160, 150, 150);
+    background-color: rgb(55, 66, 97);
+}
+
+td.dark-mode {
+    border: 3px solid rgba(181, 151, 151, 0.558);
+    background-color: rgb(157, 109, 81);
+}
+
+td.dark-mode.hidden:hover {
+    background-color: rgb(68, 86, 153);
+}

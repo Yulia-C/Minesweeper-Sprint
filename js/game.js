@@ -5,9 +5,12 @@ var gDifficulties = [8, 12, 16]
 const MINE = '💣'
 const FLAG = '🏴‍☠️'
 const LIFE = '💖'
+const SAFE = '✔'
 
 var gLivesCount
 var gMineCount
+var gSafeClicks
+
 
 // timer
 var gInterval = null
@@ -17,7 +20,6 @@ var gTimerStarted = false
 
 var gBoard
 var gGame
-var gIsDark = false
 
 var gLevel = {
     SIZE: gDifficulties[0],
@@ -30,26 +32,38 @@ const WIN_IMG = 'img/win.png'
 
 
 function onInit() {
-    // console.log('Hi');
-    resetTimer()
-    gLivesCount = 3
-    gMineCount = 0
-    gGame = {
-        isOn: true,
-        isFirstClicked: false,
-        shownCount: 0,
-        markedCount: 0,
-        secsPassed: 0
-    }
 
+    resetTimer()
+    if (!gGame) {
+        gGame = {
+            isOn: true,
+            isFirstClicked: false,
+            isDarkMode: false,
+            shownCount: 0,
+            markedCount: 0,
+            secsPassed: 0
+        }
+    }
+    gLivesCount = 3
+    gSafeClicks = 3
+
+    gMineCount = 0
     updateMineCount(gLevel.MINES)
+
+    gGame.isFirstClicked = false
+    gGame.isOn = true
+    gGame.shownCount = 0
+    gGame.markedCount = 0
+    gGame.secsPassed = 0
+
     gBoard = buildBoard(gLevel.SIZE)
     renderBoard(gBoard)
+    if (gGame.isDarkMode) addDark()
 
     console.log('gBoard:', gBoard)
     console.log('gGame:', gGame)
+    updateSafeCount(3)
 }
-
 
 function renderBoard(board) {
     document.querySelector('img').src = START_IMG
@@ -116,11 +130,8 @@ function onCellClicked(elCell, i, j) {
 
     var cell = gBoard[i][j]
     firstClicked(i, j)
-    console.log('gGame:', gGame)
-
     //Starting the timer:
     startTimer()
-
     // opening the cells
     if (!cell.isShown) {
         //Changing classname after clicking on cell:
@@ -144,7 +155,6 @@ function onCellClicked(elCell, i, j) {
                 document.querySelector('img').src = LOSE_IMG
 
             }
-
             //Updating the Dom
             elCell.innerText = cell.isMine ? MINE : minesAroundCount
         } else {
@@ -157,11 +167,12 @@ function onCellClicked(elCell, i, j) {
 
 function onRightClick(ev, elCell) {
     ev.preventDefault()
-
-    if (!gGame.isOn) return
-
     const cellCoord = getCellCoord(elCell)
     const cell = gBoard[cellCoord.i][cellCoord.j]
+
+    if (!gGame.isOn || cell.isShown) return
+
+
     if (!cell.isMarked) {
         cell.isMarked = true
         gGame.markedCount += 1
@@ -179,9 +190,8 @@ function onRightClick(ev, elCell) {
     checkVictory()
 }
 
-
 function openNeighbourCells(cellI, cellJ) {
-    // if (gBoard[cellI][cellJ].minesAroundCount !== 0) return
+    if (gBoard[cellI][cellJ].minesAroundCount !== 0) return
 
     for (var i = cellI - 1; i <= cellI + 1; i++) {
         if (i < 0 || i >= gBoard.length) continue
@@ -192,11 +202,15 @@ function openNeighbourCells(cellI, cellJ) {
             var elCell = document.querySelector(`.cell-${i}-${j}`)
             var count = countNeighborMines(i, j, gBoard)
 
-            if (!currCell.isShown && !currCell.isMine) {
+            if (!currCell.isShown && !currCell.isMine && !currCell.isMarked) {
                 currCell.isShown = true
                 gGame.shownCount += 1
                 elCell.classList.remove('hidden')
                 elCell.innerText = (count > 0) ? count : ''
+                if (count === 1) elCell.classList.add('one')
+                if (count === 2) elCell.classList.add('two')
+                if (count === 3) elCell.classList.add('three')
+                if (count === 4) elCell.classList.add('four')
                 currCell.minesAroundCount = count
 
                 if (count === 0) {
@@ -206,6 +220,49 @@ function openNeighbourCells(cellI, cellJ) {
 
         }
     }
+}
+
+function onSafeClick() {
+    const randCell = getRandEmptyCell(gBoard)
+    var elCell = document.querySelector(`.cell-${randCell.i}-${randCell.j}`)
+    // console.log(elCell, randCell)
+    if (elCell.classList.contains('hidden')) {
+        elCell.style.backgroundColor = 'pink'
+        setTimeout(() => {
+            // elCell.classList.remove('safe')
+            elCell.style.removeProperty('background-color')
+        }, 1000)
+    }
+}
+
+
+function scoreUpdate() {
+    const currScore = gGame.secsPassed
+    const level = gLevel.SIZE
+
+    const easyScore = +localStorage.getItem('easy') || Infinity
+    const normalScore = +localStorage.getItem('normal') || Infinity
+    const hardScore = +localStorage.getItem('hard') || Infinity
+
+    const elEasy = document.querySelector('.easy span')
+    const elNormal = document.querySelector('.normal span')
+    const elHard = document.querySelector('.hard span')
+    elEasy.innerHTML = easyScore === Infinity ? 0 : easyScore
+    elNormal.innerHTML = normalScore === Infinity ? 0 : normalScore
+    elHard.innerHTML = hardScore === Infinity ? 0 : hardScore
+
+    if (level === 8 && easyScore > currScore) {
+        +localStorage.setItem('easy', currScore)
+        elEasy.innerHTML = currScore
+    } else if (level === 12 && normalScore > currScore) {
+        +localStorage.setItem('normal', currScore)
+        elNormal.innerHTML = currScore
+    } else if (level === 16 && hardScore > currScore) {
+        +localStorage.setItem('hard', currScore)
+        elHard.innerHTML = currScore
+    }
+
+
 }
 
 function getClassName(board) {
@@ -219,45 +276,6 @@ function getClassName(board) {
         }
     }
 }
-
-
-// function openNeighbourCells(cellI, cellJ) {
-
-//     for (var i = cellI - 1; i <= cellI + 1; i++) {
-//         if (i < 0 || i >= gBoard.length) continue
-//         for (var j = cellJ - 1; j <= cellJ + 1; j++) {
-//             if (j < 0 || j >= gBoard[i].length) continue
-//             //Model
-//             if (!gBoard[i][j].isMine) {
-//                 var count = countNeighborMines(i, j, gBoard)
-
-//                 gBoard[i][j].isShown = true
-
-//                 gBoard[i][j].minesAroundCount = count
-
-//                 gGame.shownCount += 1
-//                 // console.log(gBoard[i][j]);
-
-//                 //Dom
-//                 var elCell = document.querySelector(`.cell-${i}-${j}`)
-//                 if (elCell.classList.contains('flagged')) return
-//                 elCell.innerHTML = (count > 0) ? count : ''
-//                 // if (count === 1) elCell.classList.add(`one`)
-//                 // if (count === 2) elCell.classList.add(`two`)
-//                 // if (count === 3) elCell.classList.add(`three`)
-//                 // if (count === 4) elCell.classList.add(`four`)
-//                 // if (count === 5) elCell.classList.add(`five`)
-//                 elCell.classList.remove('hidden')
-//                 if (gBoard[i][j].minesAroundCount === 0) {
-//                     openNeighbourCells(i,j)
-//                 }
-//             }
-//         }
-//     }
-//     console.log(gBoard);
-//     console.log(gGame);
-
-// }
 
 function revealAllMines() {
     for (var i = 0; i < gBoard.length; i++) {
@@ -283,6 +301,11 @@ function updateLivesCount(diff) {
     const elLives = document.querySelector('.lives')
     elLives.innerHTML = LIFE.repeat(gLivesCount)
 }
+function updateSafeCount(diff) {
+    gSafeClicks -= diff
+    const elSafe = document.querySelector('.safe-span')
+    elSafe.innerHTML = SAFE.repeat(gSafeClicks)
+}
 
 function checkVictory() {
     var allNonMinesRevealed = true
@@ -305,30 +328,30 @@ function checkVictory() {
         clearTimeout(gInterval)
         gGame.isOn = false
         document.querySelector('img').src = WIN_IMG
+        scoreUpdate()
     }
+
 }
 
 function onLevelClick(elBtn) {
     var difficulty = gDifficulties[elBtn.dataset.idx]
     elBtn.classList.add('clicked')
     gLevel.SIZE = difficulty
-    gLevel.MINES = (difficulty * 2)
+    gLevel.MINES = (difficulty / 2)
     gBoard = buildBoard(gLevel.SIZE)
     renderBoard(gBoard)
-
     onInit()
 }
 
-
-function onDarkMode() {
-    console.log('Toggling Dark Mode')
-
-    if (!gIsDark) {
+function onDarkMode(elBtn) {
+    if (!gGame.isDarkMode) {
         addDark()
-        gIsDark = true
+        gGame.isDarkMode = true
+        elBtn.innerHTML = 'Dark Mode On'
     } else {
         removeDark()
-        gIsDark = false
+        gGame.isDarkMode = false
+        elBtn.innerHTML = 'Dark Mode'
     }
 }
 
@@ -340,20 +363,22 @@ function addDark() {
     var tables = document.querySelectorAll('table')  // Select all tables
     var tds = document.querySelectorAll('td')  // Select all td elements
     var hiddenCells = document.querySelectorAll('.hidden')  // Select all hidden cells
+    var score = document.querySelectorAll('p')
 
     body.classList.add('dark-mode')
 
     buttons.forEach(function (button) {
         button.classList.add('dark-mode')
     })
+    score.forEach(function (p) {
+        p.classList.add('dark-mode')
+    })
     gameBorders.forEach(function (gameBorder) {
         gameBorder.classList.add('dark-mode')
     })
-
     tables.forEach(function (table) {
         table.classList.add('dark-mode')
     })
-
     tds.forEach(function (td) {
         td.classList.add('dark-mode')
     })
@@ -369,7 +394,11 @@ function removeDark() {
     var tables = document.querySelectorAll('table')  // Select all tables
     var tds = document.querySelectorAll('td')  // Select all td elements
     var hiddenCells = document.querySelectorAll('.hidden')  // Select all hidden cells
+    var score = document.querySelectorAll('p')
 
+    score.forEach(function (p) {
+        p.classList.remove('dark-mode')
+    })
     body.classList.remove('dark-mode')
     buttons.forEach(function (button) {
         button.classList.remove('dark-mode')

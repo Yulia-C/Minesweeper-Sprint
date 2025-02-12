@@ -1,7 +1,6 @@
 'use strict'
 
 
-
 function getRandEmptyCell(board) {
 
     const emptyCells = []
@@ -10,19 +9,17 @@ function getRandEmptyCell(board) {
         for (var j = 0; j < board[i].length; j++) {
 
             var cell = board[i][j]
-            if (!cell.isMine) {
+            if (!cell.isMine && !cell.isShown) {
                 emptyCells.push({ i, j })
             }
         }
     }
-    // if (!emptyCells.length) return null
+    if (!emptyCells.length) return null
     var randIdx = getRandomIntInclusive(0, emptyCells.length - 1)
     var randomCell = emptyCells[randIdx]
-
     return randomCell
 }
 
-// location is an object like this - { i: 2, j: 7 }
 function renderCell(value) {
     // Select the elCell and set the value
     var elCell = document.querySelector(`.cell-${i}-${j}`)
@@ -45,7 +42,6 @@ function getCellCoord(elCell) {
     return coord;
 }
 
-
 function countNeighborMines(cellI, cellJ, board) {
     var mineCount = 0;
 
@@ -64,8 +60,6 @@ function countNeighborMines(cellI, cellJ, board) {
     return mineCount;
 }
 
-
-
 function startTimer() {
     if (!gTimerStarted) {
         gStartTime = Date.now()
@@ -75,7 +69,6 @@ function startTimer() {
     }
 
 }
-
 
 function resetTimer() {
     clearInterval(gInterval)
